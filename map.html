@@ -83,6 +83,7 @@
 
 <body> 
 
+<button onclick="savePlace();">Save Place</button>
   <!-- Page starts here -->
     <div data-role="page" data-theme="b" id="mapPage" data-add-back-btn="true">
 
@@ -95,6 +96,8 @@
     </div>
 
   <div id="main">
+
+<a href="index.html" data-role="button" data-icon="delete">Save Place</a>
       <div id="heatmapArea">
       
       </div>
@@ -226,6 +229,44 @@ function setHeader(xhr) {
 
   xhr.setRequestHeader('Authorization', 'token');
 }
+$('a').click( function() { alert('saving...');savePlace(); } );
+function savePlace() {
+  var verticies = '{"coordinates":[';
+  var numPaths = shape.getPaths().getLength();
+  for(var p = 0; p < numPaths; p++) {
+    var path = shape.getPaths().getAt(p);
+    var numPoints = path.getLength();
+    var j = numPoints-1;
+    
+    for(var i=0; i < numPoints-1; i++) {
+      var vertex1 = path.getAt(i);
+      verticies+='{"lat": '+vertex1.lat()+', "lng":'+vertex1.lng()+'},';
+		  }
+		  var vertex1 = path.getAt(numPoints-1);
+		  
+		  verticies +='{"lat": '+vertex1.lat()+', "lng":'+vertex1.lng()+'}]}';
+  }
+
+           $.ajax({
+                url: "http://ec2-184-73-32-179.compute-1.amazonaws.com/api/reality_analysis_service/get_reality_analysis_data?bearer_token=6bceb96de2&document_key=map_place",
+                accept: "application/json",
+                type: "POST",
+                data: verticies,
+                success: function(data, status) {
+                    alert("POST success!  Check the database.");
+                return console.log("The returned data", data);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    x = jqXHR;
+                    alert(x);
+                },
+                dataType: "json",
+                
+            });
+
+
+};
+
 
 </script>
 <!-- Page ends here -->
