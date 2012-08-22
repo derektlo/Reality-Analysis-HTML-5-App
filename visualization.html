@@ -32,7 +32,22 @@
 <body> 
 
   <!-- Page starts here -->
-    <div data-role="page" data-theme="b" id="settingsPage" data-add-back-btn="true">
+    <div data-role="page" data-theme="b" id="visualizationPage" data-add-back-btn="true">
+
+<script>
+
+$(document).bind('mobileinit',function(){
+        $.mobile.selectmenu.prototype.options.nativeMenu = false;
+  });
+
+  $(document).bind('pageinit', function() {
+    console.log("fired");
+
+
+          // $('#visMenu').selectmenu('refresh',true);
+});
+
+</script>
 
       <div data-role="navbar" id="navbar">
       <ul>
@@ -46,13 +61,35 @@
   <div data-role="content" id="visualizationContent" name="visualizationContent"> 
        
         <div id="radial_chart">
-          <script type="text/javascript" src="./radialScriptRealityAnalysis.js"></script>
+           <script type="text/javascript" src="./radialScriptRealityAnalysis.js"></script>
         </div>
 
-    
+        <form id="visForm">
+          <div id="visSelectionMenu">
+           </div>
+         </form>
   </div><!-- contentSettings -->
-</div> <!-- settingsPage -->
 
+
+<script>
+
+ $(document).ready(function(){
+
+              $('#visSelectionMenu').append('<div data-role="fieldcontain"><label for="visMenu" class="select">Select Visualization:</label><select name="visMenu" id="visMenu" data-native-menu="false">');
+
+              var visualizationList = ['Social Triangle','Individual Triangle'];
+
+              for (var i = 0; i < visualizationList.length; i++) {
+                $('#visMenu').append('<option value=\'' + visualizationList[i] + '\'>' + visualizationList[i] + '</option>');
+              }
+              
+              $('#visMenu').selectmenu();
+               $("#visMenu").selectmenu('refresh', true);
+
+  });
+
+</script>
+</div> <!-- visualizationPage -->
 
 <!-- Page ends here -->
 </body>
