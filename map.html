@@ -90,6 +90,10 @@
   <!-- Page starts here -->
     <div data-role="page" data-theme="b" id="mapPage" data-add-back-btn="true">
 
+     <header data-role="header">
+       <h1>Map</h1>
+    </header>
+
       <div data-role="navbar" id="navbar">
       <ul>
         <li><a href="settings.html" rel="external" data-icon="" data-transition="fade">Settings</a></li>
@@ -111,6 +115,12 @@
 <script type="text/javascript" src="heatmap.js"></script>
 <script type="text/javascript" src="heatmap-gmaps.js"></script>
 <script type="text/javascript">
+
+$(document).bind('pageinit',function(){
+  console.log("Ready");
+});
+
+  setInterval("checkMyLocation()",10000);
 
 var map;
 var heatmap; 
@@ -269,6 +279,10 @@ function savePlace() {
 
 
 };
+
+function checkMyLocation(){
+  console.log("hello");
+}
 
 
 </script>

@@ -36,6 +36,7 @@ var whiteColor = d3.rgb(255,255,255);
 var redColor = d3.rgb(200,100,50);
 var newColor = d3.rgb(100,100,100);
 var pink = d3.rgb(238,98,226);
+var lightblue = d3.rgb(122,205,247);
 
 var stack = d3.layout.stack()
     .offset("zero")//.offset(function(d) { return d.y0; })
@@ -69,7 +70,8 @@ var area = d3.svg.area.radial()
     //.innerRadius(function(d) { return radius(replaceY0); })
     .innerRadius(function(d, i) {
         if (d.layer == "User"){ // Hardcoded check right now, might change later...data tag must have USER in it...
-          return radius(d.y);
+        //  return radius(d.y);
+        return 0;
         }
         else{
         return radius(lowestValues[i]);
@@ -146,13 +148,13 @@ var svg = d3.select("#radial_chart").append("svg")
         function(d, i) 
         {
           if (i === 0){
-            return whiteColor;
+            return pink;
           }
           else if (i == 1){
-            return z(i);
+            return lightblue;
           }
           else
-          return newColor; 
+            return pink; 
         })
       .style("opacity",.6)
       .style("stroke",function(d, i){
@@ -171,11 +173,8 @@ var svg = d3.select("#radial_chart").append("svg")
         else if (i == 0)
           return 0;
         else
-          return 7;
+          return 0;
       });
-
-
-
 
 
  // Create the svg drawing canvas...
@@ -200,7 +199,7 @@ var arrayOfTypes = ["User","Average High-Low"];
           if (i == 0)
             return pink;
           else
-            return z(i) }) // Bar fill color
+            return lightblue }) // Bar fill color
           .attr("r", 10);
 
       // Create hyper linked text at right that acts as label key...

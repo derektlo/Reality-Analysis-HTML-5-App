@@ -4,7 +4,7 @@
   <meta name="viewport" content="height=device-height,width=device-width,initial-scale=1.0,maximum-scale=1.0" >
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 
-  <title>Settings</title> 
+  <title>Reality Analysis App</title> 
 
   <link rel="stylesheet" type="text/css" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
   <link rel="stylesheet" type="text/css" href="simpleDialog2/jquery.mobile.simpledialog.min.css" /> 
@@ -34,20 +34,15 @@
   <!-- Page starts here -->
     <div data-role="page" data-theme="b" id="visualizationPage" data-add-back-btn="true">
 
-<script>
+<style>
+  #radial_chart {
+    margin-top:5px;
+  }
+</style>
 
-$(document).bind('mobileinit',function(){
-        $.mobile.selectmenu.prototype.options.nativeMenu = false;
-  });
-
-  $(document).bind('pageinit', function() {
-    console.log("fired");
-
-
-          // $('#visMenu').selectmenu('refresh',true);
-});
-
-</script>
+    <header data-role="header">
+     <h1>Reality Analysis HTML 5</h1>
+    </header>
 
       <div data-role="navbar" id="navbar">
       <ul>
@@ -64,29 +59,56 @@ $(document).bind('mobileinit',function(){
            <script type="text/javascript" src="./radialScriptRealityAnalysis.js"></script>
         </div>
 
-        <form id="visForm">
           <div id="visSelectionMenu">
            </div>
-         </form>
-  </div><!-- contentSettings -->
-
+  </div>
 
 <script>
 
- $(document).ready(function(){
+ $(document).bind('mobileinit',function(){
+        $.mobile.selectmenu.prototype.options.nativeMenu = false;
+  });
 
-              $('#visSelectionMenu').append('<div data-role="fieldcontain"><label for="visMenu" class="select">Select Visualization:</label><select name="visMenu" id="visMenu" data-native-menu="false">');
+$('#visMenu').live('change', function(e) {
+     
+     var appendString;
+    if (e.target.options[e.target.selectedIndex].text === 'Social Triangle')
+        appendString = '<script type="text/javascript" src="./radialScriptRealityAnalysis.js"><script>';
+    else
+        appendString = '<script type="text/javascript" src="./radialScriptSimple.js"><script>';
+
+    $('#radial_chart').empty();
+    $('#radial_chart').append(appendString);
+    $('#radial_chart').trigger('create');
+});
+
+$('#visualizationPage').bind('pagebeforeshow', function(){
+  appendSelectMenu();
+});
+
+$("#radial_chart").click(function(event){
+    // do your action 
+    $.mobile.changePage("boxPlot.html", {transition : "slideup"});
+});
+
+function removeSelectMenu(){
+  $('#visSelectionMenu').remove();
+}
+
+function appendSelectMenu(){
+            $('#visSelectionMenu').empty();
+
+            $('#visSelectionMenu').append('<div data-role="fieldcontain"><label for="visMenu" class="select">Select Visualization:</label><select name="visMenu" id="visMenu" data-native-menu="false" class="visualizationMenu">');
 
               var visualizationList = ['Social Triangle','Individual Triangle'];
 
               for (var i = 0; i < visualizationList.length; i++) {
                 $('#visMenu').append('<option value=\'' + visualizationList[i] + '\'>' + visualizationList[i] + '</option>');
               }
-              
+
               $('#visMenu').selectmenu();
                $("#visMenu").selectmenu('refresh', true);
-
-  });
+}
 
 </script>
 </div> <!-- visualizationPage -->
