@@ -152,7 +152,7 @@ heatmap = new HeatmapOverlay(map, {"radius":15, "visible":true, "opacity":60});
                 drawingControl: true,
                 drawingControlOptions: {
                   position: google.maps.ControlPosition.TOP_CENTER,
-                  drawingModes: [google.maps.drawing.OverlayType.MARKER, google.maps.drawing.OverlayType.CIRCLE, google.maps.drawing.OverlayType.POLYGON]
+                  drawingModes: [google.maps.drawing.OverlayType.POLYGON]
                 },
                 markerOptions: {
                   icon: new google.maps.MarkerImage('http://www.example.com/icon.png')
@@ -266,7 +266,9 @@ function savePlace() {
                 type: "POST",
                 data: verticies,
                 success: function(data, status) {
-                    alert("POST success!  Check the database.");
+		    var loc = android.getLocation();
+		    var loc_json = jQuery.parseJSON(loc);
+		    android.notify(loc_json.lon, "lo"); 
                 return console.log("The returned data", data);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
@@ -279,12 +281,100 @@ function savePlace() {
 
 
 };
+var polyCoords = [
+    new google.maps.LatLng(0,2),
+    new google.maps.LatLng(0,0),
+    new google.maps.LatLng(2,0),
+    new google.maps.LatLng(2,2),  
+];
 
 function checkMyLocation(){
   console.log("hello");
 }
 
 
+var polygon = new google.maps.Polygon({
+  paths: polyCoords,  strokeColor: "#FF0000",
+  strokeOpacity: 0.8,  strokeWeight: 2,
+  fillColor: "#FF0000",  fillOpacity: 0.2
+});
+
+
+
+
+
+
+
+if (!google.maps.Polygon.prototype.getBounds) {
+  google.maps.Polygon.prototype.getBounds = function(latLng) {
+    var bounds = new google.maps.LatLngBounds();
+    var paths = this.getPaths();
+    var path;
+    for (var p = 0; p < paths.getLength(); p++) {
+      path = paths.getAt(p);
+      for (var i = 0; i < path.getLength(); i++) {
+        bounds.extend(path.getAt(i));
+      }
+    }
+    return bounds;
+  }
+}
+
+
+    // Polygon containsLatLng - method to determine if a latLng is within a polygon
+    google.maps.Polygon.prototype.containsLatLng = function(latLng) {
+      // Exclude points outside of bounds as there is no way they are in the poly
+      var bounds = this.getBounds();
+
+      if(bounds != null && !bounds.contains(latLng)) {
+        return false;
+      }
+
+      // Raycast point in polygon method
+      var inPoly = false;
+
+      var numPaths = this.getPaths().getLength();
+      for(var p = 0; p < numPaths; p++) {
+        var path = this.getPaths().getAt(p);
+        var numPoints = path.getLength();
+        var j = numPoints-1;
+
+        for(var i=0; i < numPoints; i++) { 
+          var vertex1 = path.getAt(i);
+          var vertex2 = path.getAt(j);
+
+          if (vertex1.lng() < latLng.lng() && vertex2.lng() >= latLng.lng() || vertex2.lng() < latLng.lng() && vertex1.lng() >= latLng.lng())  {
+            if (vertex1.lat() + (latLng.lng() - vertex1.lng()) / (vertex2.lng() - vertex1.lng()) * (vertex2.lat() - vertex1.lat()) < latLng.lat()) {
+              inPoly = !inPoly;
+            }
+          }
+
+          j = i;
+        }
+      }
+
+      return inPoly;
+    }
+
+
+setInterval(function(){GetLocation();},10000);
+var notified = false;
+function GetLocation() {
+//    alert("Your coordinates are:" + location.coords.latitude + ", " + location.coords.longitude);
+
+    var loc = android.getLocation();
+    var loc_json = jQuery.parseJSON(loc);
+    var latlng = new google.maps.LatLng(loc_json.lat, loc_json.lon);
+
+//    alert(shape.containsLatLng(latlng));
+    if(!notified){
+	    if(shape.containsLatLng(latlng))
+		{
+			android.notify('Welcome to Media Lab', 'http://media.mit.edu');
+			notified = true;
+		}
+	}
+}
 </script>
 <!-- Page ends here -->
 </body>
