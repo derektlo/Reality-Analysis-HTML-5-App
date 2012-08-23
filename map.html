@@ -256,7 +256,7 @@ function savePlace() {
                 type: "POST",
                 data: verticies,
                 success: function(data, status) {
-                    alert("POST success!  Check the database.");
+		    android.notify('hello', 'world'); 
                 return console.log("The returned data", data);
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
