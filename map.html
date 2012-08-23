@@ -344,10 +344,15 @@ if (!google.maps.Polygon.prototype.getBounds) {
 setInterval(function(){navigator.geolocation.getCurrentPosition(GetLocation)},10000);
 function GetLocation(location) {
     
-    alert("Your coordinates are:" + location.coords.latitude + ", " + location.coords.longitude);
+//    alert("Your coordinates are:" + location.coords.latitude + ", " + location.coords.longitude);
 
     var latlng = new google.maps.LatLng(location.coords.latitude, location.coords.longitude);
-    alert(shape.containsLatLng(latlng));
+
+//    alert(shape.containsLatLng(latlng));
+    if(shape.containsLatLng(latlng))
+	{
+		android.notify('Welcome to Media Lab', 'Jeff');
+	}
 
 }
 </script>
